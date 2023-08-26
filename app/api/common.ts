@@ -27,9 +27,6 @@ export async function requestOpenai(req: NextRequest) {
   console.log("[Proxy] ", openaiPath);
   console.log("[Base Url]", baseUrl);
 
-  const clonedData = req.clone();
-  console.log("[Data]", await clonedData.text());
-
   if (process.env.OPENAI_ORG_ID) {
     console.log("[Org ID]", process.env.OPENAI_ORG_ID);
   }
