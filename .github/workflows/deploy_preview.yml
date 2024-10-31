@@ -65,7 +65,7 @@ jobs:
           set -e
           vercel pull --yes --environment=preview --token=${VERCEL_TOKEN}
           vercel build --token=${VERCEL_TOKEN}
-          vercel deploy --force --prebuilt --archive=tgz --token=${VERCEL_TOKEN} --meta base_hash=${{ env.META_TAG }}
+          vercel deploy --prebuilt --archive=tgz --token=${VERCEL_TOKEN} --meta base_hash=${{ env.META_TAG }}
 
           DEFAULT_URL=$(vercel ls --token=${VERCEL_TOKEN} --meta base_hash=${{ env.META_TAG }})
           ALIAS_URL=$(vercel alias set ${DEFAULT_URL} ${{ steps.set_env.outputs.VERCEL_ALIAS_DOMAIN }} --token=${VERCEL_TOKEN} --scope ${VERCEL_TEAM}| awk '{print $3}')
