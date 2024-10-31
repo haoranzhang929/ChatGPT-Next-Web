@@ -1,12 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { auth } from "./auth";
 import { getServerSideConfig } from "@/app/config/server";
-import {
-  ApiPath,
-  GEMINI_BASE_URL,
-  Google,
-  ModelProvider,
-} from "@/app/constant";
+import { ApiPath, GEMINI_BASE_URL, ModelProvider } from "@/app/constant";
 import { prettyObject } from "@/app/utils/format";
 
 const serverConfig = getServerSideConfig();
@@ -54,7 +49,8 @@ export async function handle(
     });
   }
 
-  const bearToken = req.headers.get("Authorization") ?? "";
+  const bearToken =
+    req.headers.get("x-goog-api-key") || req.headers.get("Authorization") || "";
   const token = bearToken.trim().replaceAll("Bearer ", "").trim();
 
   const apiKey = token ? token : serverConfig.googleApiKey;
@@ -122,8 +118,8 @@ async function request(req: NextRequest, apiKey: string) {
     },
     10 * 60 * 1000,
   );
-  const fetchUrl = `${baseUrl}${path}?key=${apiKey}${
-    req?.nextUrl?.searchParams?.get("alt") === "sse" ? "&alt=sse" : ""
+  const fetchUrl = `${baseUrl}${path}${
+    req?.nextUrl?.searchParams?.get("alt") === "sse" ? "?alt=sse" : ""
   }`;
 
   console.log("[Fetch Url] ", fetchUrl);
@@ -131,6 +127,9 @@ async function request(req: NextRequest, apiKey: string) {
     headers: {
       "Content-Type": "application/json",
       "Cache-Control": "no-store",
+      "x-goog-api-key":
+        req.headers.get("x-goog-api-key") ||
+        (req.headers.get("Authorization") ?? "").replace("Bearer ", ""),
     },
     method: req.method,
     body: req.body,
