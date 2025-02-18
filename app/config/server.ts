@@ -23,6 +23,7 @@ declare global {
       DISABLE_FAST_LINK?: string; // disallow parse settings from url or not
       CUSTOM_MODELS?: string; // to control custom models
       DEFAULT_MODEL?: string; // to control default model in every new chat window
+      VISION_MODELS?: string; // to control vision models
 
       // stability only
       STABILITY_URL?: string;
@@ -72,6 +73,9 @@ declare global {
       IFLYTEK_API_KEY?: string;
       IFLYTEK_API_SECRET?: string;
 
+      DEEPSEEK_URL?: string;
+      DEEPSEEK_API_KEY?: string;
+
       // xai only
       XAI_URL?: string;
       XAI_API_KEY?: string;
@@ -80,8 +84,14 @@ declare global {
       CHATGLM_URL?: string;
       CHATGLM_API_KEY?: string;
 
+      // siliconflow only
+      SILICONFLOW_URL?: string;
+      SILICONFLOW_API_KEY?: string;
+
       // custom template for preprocessing user input
       DEFAULT_INPUT_TEMPLATE?: string;
+
+      ENABLE_MCP?: string; // enable mcp functionality
     }
   }
 }
@@ -125,6 +135,7 @@ export const getServerSideConfig = () => {
   const disableGPT4 = !!process.env.DISABLE_GPT4;
   let customModels = process.env.CUSTOM_MODELS ?? "";
   let defaultModel = process.env.DEFAULT_MODEL ?? "";
+  let visionModels = process.env.VISION_MODELS ?? "";
 
   if (disableGPT4) {
     if (customModels) customModels += ",";
@@ -148,8 +159,10 @@ export const getServerSideConfig = () => {
   const isAlibaba = !!process.env.ALIBABA_API_KEY;
   const isMoonshot = !!process.env.MOONSHOT_API_KEY;
   const isIflytek = !!process.env.IFLYTEK_API_KEY;
+  const isDeepSeek = !!process.env.DEEPSEEK_API_KEY;
   const isXAI = !!process.env.XAI_API_KEY;
   const isChatGLM = !!process.env.CHATGLM_API_KEY;
+  const isSiliconFlow = !!process.env.SILICONFLOW_API_KEY;
   // const apiKeyEnvVar = process.env.OPENAI_API_KEY ?? "";
   // const apiKeys = apiKeyEnvVar.split(",").map((v) => v.trim());
   // const randomIndex = Math.floor(Math.random() * apiKeys.length);
@@ -212,6 +225,10 @@ export const getServerSideConfig = () => {
     iflytekApiKey: process.env.IFLYTEK_API_KEY,
     iflytekApiSecret: process.env.IFLYTEK_API_SECRET,
 
+    isDeepSeek,
+    deepseekUrl: process.env.DEEPSEEK_URL,
+    deepseekApiKey: getApiKey(process.env.DEEPSEEK_API_KEY),
+
     isXAI,
     xaiUrl: process.env.XAI_URL,
     xaiApiKey: getApiKey(process.env.XAI_API_KEY),
@@ -224,6 +241,10 @@ export const getServerSideConfig = () => {
     cloudflareKVNamespaceId: process.env.CLOUDFLARE_KV_NAMESPACE_ID,
     cloudflareKVApiKey: getApiKey(process.env.CLOUDFLARE_KV_API_KEY),
     cloudflareKVTTL: process.env.CLOUDFLARE_KV_TTL,
+
+    isSiliconFlow,
+    siliconFlowUrl: process.env.SILICONFLOW_URL,
+    siliconFlowApiKey: getApiKey(process.env.SILICONFLOW_API_KEY),
 
     gtmId: process.env.GTM_ID,
     gaId: process.env.GA_ID || DEFAULT_GA_ID,
@@ -241,6 +262,8 @@ export const getServerSideConfig = () => {
     disableFastLink: !!process.env.DISABLE_FAST_LINK,
     customModels,
     defaultModel,
+    visionModels,
     allowedWebDavEndpoints,
+    enableMcp: process.env.ENABLE_MCP === "true",
   };
 };
